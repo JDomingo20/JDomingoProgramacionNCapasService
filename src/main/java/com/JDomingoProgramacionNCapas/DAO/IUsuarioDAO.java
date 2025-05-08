@@ -11,4 +11,5 @@ public interface IUsuarioDAO {
     Result GetAllJPA();
     Result GetById(int IdUsuario);
     Result AddJPA(UsuarioDireccion usuarioDireccion);
+    Result DeleteJPA(int IdUsuario);
 }

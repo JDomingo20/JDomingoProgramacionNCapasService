@@ -64,8 +64,8 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         try {
             Usuario usuario = entityManager.find(Usuario.class, IdUsuario);
             result.object = usuario;
-            
-            result.correct=true;
+
+            result.correct = true;
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
@@ -91,7 +91,36 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         }
         return result;
     }
+    
+    @Transactional
+    @Override
+    public Result DeleteJPA(int idUsuario) {
+        Result result = new Result();
+        try {
+            com.JDomingoProgramacionNCapas.JPA.Usuario usuarioJPA = entityManager.find(com.JDomingoProgramacionNCapas.JPA.Usuario.class, idUsuario);
 
+            if (usuarioJPA != null) {
+                // Buscar todas las direcciones relacionadas
+                Query query = entityManager.createQuery("SELECT d FROM Direccion d WHERE d.Usuario.idUsuario = :idUsuario");
+                query.setParameter("idUsuario", idUsuario);
+                List<Direccion> direcciones = query.getResultList();
+
+                for (Direccion d : direcciones) {
+                    entityManager.remove(d);
+                }
+                entityManager.remove(usuarioJPA);
+                result.correct = true;
+            } else {
+                result.correct = false;
+                result.errorMessage = "Usuario no encontrado";
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
 //    @Transactional
 //    @Override
 //    public Result UsuarioUpdateJPA(Usuario usuario) {
@@ -122,36 +151,6 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 //        return result;
 //    }
 //
-//    @Transactional
-//    @Override
-//    public Result DeleteJPA(int idUsuario) {
-//        Result result = new Result();
-//        try {
-//            com.JDomingoProgramacionNCapas.JPA.Usuario usuarioJPA= entityManager.find(com.JDomingoProgramacionNCapas.JPA.Usuario.class, idUsuario);
-//
-//            if (usuarioJPA != null) {
-//                // Buscar todas las direcciones relacionadas
-//                Query query = entityManager.createQuery("SELECT d FROM Direccion d WHERE d.Usuario.idUsuario = :idUsuario");
-//                query.setParameter("idUsuario", idUsuario);
-//                List<Direccion> direcciones = query.getResultList();
-//
-//                for (Direccion d : direcciones) {
-//                    entityManager.remove(d);
-//                }
-//
-//                entityManager.remove(usuarioJPA);
-//                result.correct = true;
-//            } else {
-//                result.correct = false;
-//                result.errorMessage = "Usuario no encontrado";
-//            }
-//        } catch (Exception ex) {
-//            result.correct = false;
-//            result.errorMessage = ex.getMessage();
-//            result.ex = ex;
-//        }
-//        return result;
-//    }
 //
 //    @Transactional
 //    @Override
