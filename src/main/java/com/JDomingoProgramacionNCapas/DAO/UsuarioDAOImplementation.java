@@ -91,7 +91,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         }
         return result;
     }
-    
+
     @Transactional
     @Override
     public Result DeleteJPA(int idUsuario) {
@@ -117,6 +117,22 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getMessage();
+            result.ex = ex;
+        }
+        return result;
+    }
+    
+    @Transactional
+    @Override
+    public Result UsuarioUpdate(Usuario usuario ) {
+        Result result = new Result();
+        
+        try {
+            entityManager.merge(usuario);
+            result.correct=true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
         return result;
@@ -227,4 +243,5 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 //
 //        return result;
 //    }
+
 }
